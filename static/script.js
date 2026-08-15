@@ -105,6 +105,7 @@ function createSparkline(values) {
     }).join(" ");
 }
 
+
 function updateChart() {
 
     document.getElementById("cpu-line")
@@ -124,6 +125,165 @@ function updateChart() {
             "points",
             createSparkline(history.disk)
         );
+}
+
+
+function updateAnomalyStatus(data) {
+
+    const onlineStatus =
+        document.querySelector(".online");
+
+    const onlineText =
+        onlineStatus.lastChild;
+
+
+    const cpuStatus =
+        document.getElementById("cpu-status");
+
+    const memoryStatus =
+        document.getElementById("memory-status");
+
+    const diskStatus =
+        document.getElementById("disk-status");
+
+
+    document
+        .querySelectorAll(".metric-card")
+        .forEach(card => {
+
+            card.classList.remove("anomaly");
+
+        });
+
+
+    if (data.anomaly) {
+
+        onlineStatus.classList.add(
+            "anomaly-online"
+        );
+
+        onlineText.textContent =
+            " Anomaly Detected";
+
+
+        if (data.anomaly_type === "cpu") {
+
+            cpuStatus.textContent =
+                "Anomaly Detected";
+
+            cpuStatus
+                .closest(".metric-card")
+                .classList.add("anomaly");
+
+        }
+
+
+        if (data.anomaly_type === "memory") {
+
+            memoryStatus.textContent =
+                "Anomaly Detected";
+
+            memoryStatus
+                .closest(".metric-card")
+                .classList.add("anomaly");
+
+        }
+
+
+        if (data.anomaly_type === "disk") {
+
+            diskStatus.textContent =
+                "Anomaly Detected";
+
+            diskStatus
+                .closest(".metric-card")
+                .classList.add("anomaly");
+
+        }
+
+    }
+
+    else {
+
+        onlineStatus.classList.remove(
+            "anomaly-online"
+        );
+
+        onlineText.textContent =
+            " System Online";
+
+
+        cpuStatus.textContent =
+            getStatus(
+                parseFloat(
+                    document.getElementById("cpu")
+                        .textContent
+                )
+            );
+
+        memoryStatus.textContent =
+            getStatus(
+                parseFloat(
+                    document.getElementById("memory")
+                        .textContent
+                )
+            );
+
+        diskStatus.textContent =
+            getStatus(
+                parseFloat(
+                    document.getElementById("disk")
+                        .textContent
+                )
+            );
+
+    }
+}
+
+
+async function loadHistory() {
+
+    try {
+
+        const response =
+            await fetch("/api/history");
+
+        const data =
+            await response.json();
+
+
+        data.forEach(item => {
+
+            history.cpu.push(item.cpu);
+
+            history.memory.push(item.memory);
+
+            history.disk.push(item.disk);
+
+        });
+
+
+        history.cpu =
+            history.cpu.slice(-MAX_POINTS);
+
+        history.memory =
+            history.memory.slice(-MAX_POINTS);
+
+        history.disk =
+            history.disk.slice(-MAX_POINTS);
+
+
+        updateChart();
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Unable to load monitoring history."
+        );
+
+    }
 }
 
 
@@ -178,6 +338,9 @@ async function getSystemData() {
         updateChart();
 
 
+        updateAnomalyStatus(data);
+
+
         document.getElementById("updated")
             .textContent =
             new Date().toLocaleTimeString();
@@ -194,9 +357,106 @@ async function getSystemData() {
 }
 
 
-getSystemData();
+async function startMonitoring() {
+
+    await loadHistory();
+
+    await getSystemData();
+
+    setInterval(
+        getSystemData,
+        2000
+    );
+
+}
+
+
+async function loadAnomalies() {
+
+    try {
+
+        const response =
+            await fetch("/api/anomalies");
+
+        const data =
+            await response.json();
+
+
+        const list =
+            document.getElementById(
+                "anomaly-list"
+            );
+
+        const count =
+            document.getElementById(
+                "anomaly-count"
+            );
+
+
+        count.textContent =
+            data.length;
+
+
+        if (data.length === 0) {
+
+            list.innerHTML = `
+                <div class="no-anomalies">
+                    No anomalies detected
+                </div>
+            `;
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(item => {
+
+                return `
+                    <div class="anomaly-item">
+
+                        <div class="anomaly-item-header">
+
+                            <div class="anomaly-resource">
+
+                                <span class="anomaly-dot"></span>
+
+                                ${item.resource.toUpperCase()}
+
+                            </div>
+
+                            <span class="anomaly-value">
+                                ${item.value.toFixed(1)}%
+                            </span>
+
+                        </div>
+
+                        <div class="anomaly-time">
+                            ${item.timestamp}
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Unable to load anomaly history."
+        );
+
+    }
+}
+
+
+startMonitoring();
+
+loadAnomalies();
 
 setInterval(
-    getSystemData,
+    loadAnomalies,
     2000
 );

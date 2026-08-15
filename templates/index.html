@@ -2,341 +2,385 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>AI Monitoring System</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 
 <body>
 
-    <main class="dashboard">
+<main class="dashboard">
 
-        <!-- HEADER -->
 
-        <header class="topbar">
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-            <div class="brand">
+    <header class="topbar">
 
-                <h1>AI Monitoring System</h1>
+        <div class="brand">
 
-                <div class="last-updated">
-                    Last updated:
-                    <span id="updated">--</span>
-                </div>
+            <h1>AI Monitoring System</h1>
 
-            </div>
+            <div class="last-updated">
 
-            <div class="online">
-
-                <span></span>
-
-                System Online
+                Last updated:
+                <span id="updated">--</span>
 
             </div>
 
-        </header>
+        </div>
 
 
-        <!-- SYSTEM RESOURCES -->
+        <div class="online">
 
-        <section class="resources-section">
+            <span></span>
 
-            <div class="section-heading">
+            System Online
 
-                <div>
-                    <h2>System Resources</h2>
-                    <p>Current system utilization</p>
-                </div>
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         SYSTEM RESOURCES
+    ========================== -->
+
+    <section class="resources-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>System Resources</h2>
+
+                <p>Current system utilization</p>
 
             </div>
 
+        </div>
 
-            <div class="metrics">
+
+        <div class="metrics">
 
 
-                <!-- CPU -->
+            <!-- ================= CPU ================= -->
 
-                <div class="metric-card">
+            <div class="metric-card">
 
-                    <div class="metric-header">
+                <div class="metric-header">
 
-                        <div class="metric-name">
+                    <div class="metric-name">
 
-                            <div class="icon cpu-icon">
+                        <div class="icon cpu-icon">
 
-                                <svg viewBox="0 0 24 24">
+                            <svg viewBox="0 0 24 24">
 
-                                    <rect
-                                        x="6"
-                                        y="6"
-                                        width="12"
-                                        height="12"
-                                        rx="2"
-                                    />
+                                <rect
+                                    x="6"
+                                    y="6"
+                                    width="12"
+                                    height="12"
+                                    rx="2"
+                                />
 
-                                    <path d="M9 2v4" />
-                                    <path d="M15 2v4" />
-                                    <path d="M9 18v4" />
-                                    <path d="M15 18v4" />
+                                <path d="M9 2v4"/>
+                                <path d="M15 2v4"/>
+                                <path d="M9 18v4"/>
+                                <path d="M15 18v4"/>
 
-                                    <path d="M2 9h4" />
-                                    <path d="M2 15h4" />
-                                    <path d="M18 9h4" />
-                                    <path d="M18 15h4" />
+                                <path d="M2 9h4"/>
+                                <path d="M2 15h4"/>
+                                <path d="M18 9h4"/>
+                                <path d="M18 15h4"/>
 
-                                    <path d="M9 9h6v6H9z" />
+                                <path d="M9 9h6v6H9z"/>
 
-                                </svg>
-
-                            </div>
-
-                            <div>
-                                <strong>CPU</strong>
-                                <span>Processor</span>
-                            </div>
+                            </svg>
 
                         </div>
 
-                        <label>PROCESSOR</label>
 
-                    </div>
+                        <div>
 
+                            <strong>CPU</strong>
 
-                    <div class="gauge">
-
-                        <svg viewBox="0 0 200 140">
-
-                            <path
-                                class="gauge-bg"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                            <path
-                                id="cpu-gauge"
-                                class="gauge-value cpu"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                        </svg>
-
-
-                        <div class="gauge-text">
-
-                            <strong id="cpu">0%</strong>
-
-                            <span>CPU Usage</span>
+                            <span>Processor</span>
 
                         </div>
 
                     </div>
 
 
-                    <div class="usage">
+                    <label>PROCESSOR</label>
 
-                        <span></span>
+                </div>
 
-                        <span id="cpu-status">
-                            Low Usage
-                        </span>
+
+                <div class="gauge">
+
+                    <svg viewBox="0 0 200 140">
+
+                        <path
+                            class="gauge-bg"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                        <path
+                            id="cpu-gauge"
+                            class="gauge-value cpu"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                    </svg>
+
+
+                    <div class="gauge-text">
+
+                        <strong id="cpu">0%</strong>
+
+                        <span>CPU Usage</span>
 
                     </div>
 
                 </div>
 
 
-                <!-- MEMORY -->
+                <div class="usage">
 
-                <div class="metric-card">
+                    <span></span>
 
-                    <div class="metric-header">
-
-                        <div class="metric-name">
-
-                            <div class="icon memory-icon">
-
-                                <svg viewBox="0 0 24 24">
-
-                                    <rect
-                                        x="3"
-                                        y="7"
-                                        width="18"
-                                        height="10"
-                                        rx="2"
-                                    />
-
-                                    <path d="M7 10h2v4H7z" />
-                                    <path d="M11 10h2v4h-2z" />
-                                    <path d="M15 10h2v4h-2z" />
-
-                                    <path d="M6 5v2" />
-                                    <path d="M10 5v2" />
-                                    <path d="M14 5v2" />
-                                    <path d="M18 5v2" />
-
-                                    <path d="M6 17v2" />
-                                    <path d="M10 17v2" />
-                                    <path d="M14 17v2" />
-                                    <path d="M18 17v2" />
-
-                                </svg>
-
-                            </div>
-
-                            <div>
-                                <strong>RAM</strong>
-                                <span>Memory</span>
-                            </div>
-
-                        </div>
-
-                        <label>MEMORY</label>
-
-                    </div>
-
-
-                    <div class="gauge">
-
-                        <svg viewBox="0 0 200 140">
-
-                            <path
-                                class="gauge-bg"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                            <path
-                                id="memory-gauge"
-                                class="gauge-value memory"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                        </svg>
-
-
-                        <div class="gauge-text">
-
-                            <strong id="memory">0%</strong>
-
-                            <span>Memory Usage</span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="usage">
-
-                        <span></span>
-
-                        <span id="memory-status">
-                            Normal Usage
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- DISK -->
-
-                <div class="metric-card">
-
-                    <div class="metric-header">
-
-                        <div class="metric-name">
-
-                            <div class="icon disk-icon">
-
-                                <svg viewBox="0 0 24 24">
-
-                                    <rect
-                                        x="3"
-                                        y="4"
-                                        width="18"
-                                        height="16"
-                                        rx="3"
-                                    />
-
-                                    <path d="M7 8h10" />
-
-                                    <circle
-                                        cx="8"
-                                        cy="15"
-                                        r="1"
-                                    />
-
-                                    <circle
-                                        cx="16"
-                                        cy="15"
-                                        r="1"
-                                    />
-
-                                </svg>
-
-                            </div>
-
-                            <div>
-                                <strong>SSD</strong>
-                                <span>Storage</span>
-                            </div>
-
-                        </div>
-
-                        <label>STORAGE</label>
-
-                    </div>
-
-
-                    <div class="gauge">
-
-                        <svg viewBox="0 0 200 140">
-
-                            <path
-                                class="gauge-bg"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                            <path
-                                id="disk-gauge"
-                                class="gauge-value disk"
-                                d="M20 120 A80 80 0 0 1 180 120"
-                            />
-
-                        </svg>
-
-
-                        <div class="gauge-text">
-
-                            <strong id="disk">0%</strong>
-
-                            <span>Disk Usage</span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="usage">
-
-                        <span></span>
-
-                        <span id="disk-status">
-                            Normal Usage
-                        </span>
-
-                    </div>
+                    <span id="cpu-status">
+                        Low Usage
+                    </span>
 
                 </div>
 
             </div>
 
-        </section>
 
 
-        <!-- RESOURCE ACTIVITY -->
+            <!-- ================= MEMORY ================= -->
+
+            <div class="metric-card">
+
+                <div class="metric-header">
+
+                    <div class="metric-name">
+
+                        <div class="icon memory-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <rect
+                                    x="3"
+                                    y="7"
+                                    width="18"
+                                    height="10"
+                                    rx="2"
+                                />
+
+                                <path d="M7 10h2v4H7z"/>
+                                <path d="M11 10h2v4h-2z"/>
+                                <path d="M15 10h2v4h-2z"/>
+
+                                <path d="M6 5v2"/>
+                                <path d="M10 5v2"/>
+                                <path d="M14 5v2"/>
+                                <path d="M18 5v2"/>
+
+                                <path d="M6 17v2"/>
+                                <path d="M10 17v2"/>
+                                <path d="M14 17v2"/>
+                                <path d="M18 17v2"/>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>RAM</strong>
+
+                            <span>Memory</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <label>MEMORY</label>
+
+                </div>
+
+
+                <div class="gauge">
+
+                    <svg viewBox="0 0 200 140">
+
+                        <path
+                            class="gauge-bg"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                        <path
+                            id="memory-gauge"
+                            class="gauge-value memory"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                    </svg>
+
+
+                    <div class="gauge-text">
+
+                        <strong id="memory">0%</strong>
+
+                        <span>Memory Usage</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="usage">
+
+                    <span></span>
+
+                    <span id="memory-status">
+                        Normal Usage
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= DISK ================= -->
+
+            <div class="metric-card">
+
+                <div class="metric-header">
+
+                    <div class="metric-name">
+
+                        <div class="icon disk-icon">
+
+                            <svg viewBox="0 0 24 24">
+
+                                <rect
+                                    x="3"
+                                    y="4"
+                                    width="18"
+                                    height="16"
+                                    rx="3"
+                                />
+
+                                <path d="M7 8h10"/>
+
+                                <circle
+                                    cx="8"
+                                    cy="15"
+                                    r="1"
+                                />
+
+                                <circle
+                                    cx="16"
+                                    cy="15"
+                                    r="1"
+                                />
+
+                            </svg>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>SSD</strong>
+
+                            <span>Storage</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <label>STORAGE</label>
+
+                </div>
+
+
+                <div class="gauge">
+
+                    <svg viewBox="0 0 200 140">
+
+                        <path
+                            class="gauge-bg"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                        <path
+                            id="disk-gauge"
+                            class="gauge-value disk"
+                            d="M20 120 A80 80 0 0 1 180 120"
+                        />
+
+                    </svg>
+
+
+                    <div class="gauge-text">
+
+                        <strong id="disk">0%</strong>
+
+                        <span>Disk Usage</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="usage">
+
+                    <span></span>
+
+                    <span id="disk-status">
+                        Normal Usage
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         BOTTOM SECTION
+    ========================== -->
+
+    <div class="bottom-section">
+
+
+        <!-- =========================
+             RESOURCE ACTIVITY
+        ========================== -->
 
         <section class="activity-section">
 
@@ -346,7 +390,9 @@
 
                     <h2>Resource Activity</h2>
 
-                    <p>Real-time system resource utilization</p>
+                    <p>
+                        Real-time system resource utilization
+                    </p>
 
                 </div>
 
@@ -360,6 +406,7 @@
                 </div>
 
             </div>
+
 
 
             <div class="activity-list">
@@ -383,15 +430,15 @@
                                     rx="2"
                                 />
 
-                                <path d="M9 2v4" />
-                                <path d="M15 2v4" />
-                                <path d="M9 18v4" />
-                                <path d="M15 18v4" />
+                                <path d="M9 2v4"/>
+                                <path d="M15 2v4"/>
+                                <path d="M9 18v4"/>
+                                <path d="M15 18v4"/>
 
-                                <path d="M2 9h4" />
-                                <path d="M2 15h4" />
-                                <path d="M18 9h4" />
-                                <path d="M18 15h4" />
+                                <path d="M2 9h4"/>
+                                <path d="M2 15h4"/>
+                                <path d="M18 9h4"/>
+                                <path d="M18 15h4"/>
 
                             </svg>
 
@@ -438,6 +485,7 @@
                 </div>
 
 
+
                 <!-- MEMORY -->
 
                 <div class="activity-row">
@@ -456,19 +504,19 @@
                                     rx="2"
                                 />
 
-                                <path d="M7 10h2v4H7z" />
-                                <path d="M11 10h2v4h-2z" />
-                                <path d="M15 10h2v4h-2z" />
+                                <path d="M7 10h2v4H7z"/>
+                                <path d="M11 10h2v4h-2z"/>
+                                <path d="M15 10h2v4h-2z"/>
 
-                                <path d="M6 5v2" />
-                                <path d="M10 5v2" />
-                                <path d="M14 5v2" />
-                                <path d="M18 5v2" />
+                                <path d="M6 5v2"/>
+                                <path d="M10 5v2"/>
+                                <path d="M14 5v2"/>
+                                <path d="M18 5v2"/>
 
-                                <path d="M6 17v2" />
-                                <path d="M10 17v2" />
-                                <path d="M14 17v2" />
-                                <path d="M18 17v2" />
+                                <path d="M6 17v2"/>
+                                <path d="M10 17v2"/>
+                                <path d="M14 17v2"/>
+                                <path d="M18 17v2"/>
 
                             </svg>
 
@@ -515,6 +563,7 @@
                 </div>
 
 
+
                 <!-- DISK -->
 
                 <div class="activity-row">
@@ -533,7 +582,7 @@
                                     rx="3"
                                 />
 
-                                <path d="M7 8h10" />
+                                <path d="M7 8h10"/>
 
                                 <circle
                                     cx="8"
@@ -594,31 +643,90 @@
             </div>
 
 
+
             <div class="activity-footer">
 
                 <span class="legend-item">
+
                     <span class="legend-dot cpu-color"></span>
+
                     CPU
+
                 </span>
 
+
                 <span class="legend-item">
+
                     <span class="legend-dot memory-color"></span>
+
                     Memory
+
                 </span>
 
+
                 <span class="legend-item">
+
                     <span class="legend-dot disk-color"></span>
+
                     Disk
+
                 </span>
 
             </div>
 
         </section>
 
-    </main>
 
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <!-- =========================
+             ANOMALY LOG
+        ========================== -->
+
+        <section class="anomaly-section">
+
+            <div class="anomaly-header">
+
+                <div>
+
+                    <h2>Anomaly Log</h2>
+
+                    <p>
+                        Recent detected anomalies
+                    </p>
+
+                </div>
+
+
+                <span id="anomaly-count">
+                    0
+                </span>
+
+            </div>
+
+
+            <div
+                id="anomaly-list"
+                class="anomaly-list"
+            >
+
+                <div class="no-anomalies">
+
+                    No anomalies detected
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 
