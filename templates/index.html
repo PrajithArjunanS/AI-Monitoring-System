@@ -167,6 +167,11 @@
 
                 </div>
 
+                <div class="gauge-process cpu-process">
+                    <span>Leading CPU process</span>
+                    <strong id="cpu-process">Scanning...</strong>
+                </div>
+
             </div>
 
 
@@ -265,6 +270,11 @@
 
                 </div>
 
+                <div class="gauge-process memory-process">
+                    <span>Largest memory user</span>
+                    <strong id="memory-process">Scanning...</strong>
+                </div>
+
             </div>
 
 
@@ -361,6 +371,11 @@
                         Normal Usage
                     </span>
 
+                </div>
+
+                <div class="gauge-process disk-process">
+                    <span>Most disk activity</span>
+                    <strong id="disk-process">Scanning...</strong>
                 </div>
 
             </div>
@@ -697,9 +712,15 @@
                 </div>
 
 
-                <span id="anomaly-count">
-                    0
-                </span>
+                <div class="anomaly-actions">
+                    <button id="clear-anomalies" type="button">
+                        Clear
+                    </button>
+
+                    <span id="anomaly-count">
+                        0
+                    </span>
+                </div>
 
             </div>
 

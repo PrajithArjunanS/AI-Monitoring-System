@@ -54,6 +54,24 @@ function updateMetric(name, value) {
 }
 
 
+function updateProcessAttribution(processes) {
+
+    ["cpu", "memory", "disk"].forEach(resource => {
+
+        const process = processes[resource];
+        const element = document.getElementById(resource + "-process");
+
+        element.textContent = process
+            ? `${process.name} · PID ${process.pid}`
+            : resource === "disk"
+                ? "No recent disk activity"
+                : "Unavailable";
+
+    });
+
+}
+
+
 function updateHistory(name, value) {
 
     history[name].push(value);
@@ -319,6 +337,8 @@ async function getSystemData() {
         );
 
 
+        updateProcessAttribution(data.top_processes);
+
         updateHistory(
             "cpu",
             cpu
@@ -412,6 +432,14 @@ async function loadAnomalies() {
         list.innerHTML =
             data.map(item => {
 
+                const processDetails = item.resource === "cpu" && item.process_name
+                    ? `
+                        <div class="anomaly-process">
+                            <span class="anomaly-process-name">${escapeHtml(item.process_name)}</span>
+                        </div>
+                    `
+                    : "";
+
                 return `
                     <div class="anomaly-item">
 
@@ -435,6 +463,8 @@ async function loadAnomalies() {
                             ${item.timestamp}
                         </div>
 
+                        ${processDetails}
+
                     </div>
                 `;
 
@@ -452,9 +482,57 @@ async function loadAnomalies() {
 }
 
 
+function escapeHtml(value) {
+
+    const element = document.createElement("div");
+    element.textContent = value;
+    return element.innerHTML;
+
+}
+
+
+async function clearAnomalies() {
+
+    const button = document.getElementById("clear-anomalies");
+    button.disabled = true;
+
+    try {
+
+        const response = await fetch("/api/anomalies/clear", {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error("Unable to clear anomaly history.");
+        }
+
+        await loadAnomalies();
+
+    }
+
+    catch (error) {
+
+        console.log("Unable to clear anomaly history.");
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+    }
+
+}
+
+
 startMonitoring();
 
 loadAnomalies();
+
+document.getElementById("clear-anomalies").addEventListener(
+    "click",
+    clearAnomalies
+);
 
 setInterval(
     loadAnomalies,

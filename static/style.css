@@ -29,7 +29,8 @@ body {
 
     text-rendering: optimizeLegibility;
 
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
@@ -43,7 +44,7 @@ body {
 
     max-width: 1320px;
 
-    height: 100vh;
+    min-height: 100vh;
 
     margin: 0 auto;
 
@@ -53,7 +54,7 @@ body {
 
     flex-direction: column;
 
-    overflow: hidden;
+    overflow: visible;
 }
 
 
@@ -539,9 +540,9 @@ h2 {
 
     gap: 18px;
 
-    flex: 1;
+    grid-auto-rows: minmax(340px, auto);
 
-    min-height: 0;
+    flex: 0 0 auto;
 }
 
 
@@ -553,7 +554,7 @@ h2 {
 
     width: 100%;
 
-    height: 100%;
+    height: auto;
 
     margin: 0;
 
@@ -572,7 +573,7 @@ h2 {
 
     flex-direction: column;
 
-    min-height: 0;
+    min-height: 340px;
 }
 
 
@@ -628,9 +629,7 @@ h2 {
 
     margin-top: 12px;
 
-    flex: 1;
-
-    min-height: 0;
+    flex: 1 0 58px;
 
     display: flex;
 
@@ -905,7 +904,7 @@ h2 {
 
 .anomaly-section {
 
-    height: 100%;
+    height: auto;
 
     padding: 20px;
 
@@ -922,7 +921,7 @@ h2 {
 
     flex-direction: column;
 
-    min-height: 0;
+    min-height: 340px;
 }
 
 
@@ -976,6 +975,52 @@ h2 {
 }
 
 
+.anomaly-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+#clear-anomalies {
+
+    padding: 5px 9px;
+
+    border: 1px solid #e1e1e1;
+
+    border-radius: 6px;
+
+    background: #fff;
+
+    color: #777;
+
+    cursor: pointer;
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+
+#clear-anomalies:hover:not(:disabled) {
+
+    border-color: #c84747;
+
+    color: #b43b3b;
+}
+
+
+#clear-anomalies:disabled {
+
+    cursor: wait;
+
+    opacity: 0.6;
+}
+
+
 .anomaly-list {
 
     flex: 1;
@@ -984,13 +1029,13 @@ h2 {
 
     overflow-x: hidden;
 
-    padding-top: 5px;
+    padding-top: 8px;
 }
 
 
 .anomaly-item {
 
-    padding: 13px 0;
+    padding: 16px 2px;
 
     border-bottom: 1px solid #f2f2f2;
 }
@@ -1012,9 +1057,9 @@ h2 {
 
     align-items: center;
 
-    gap: 7px;
+    gap: 9px;
 
-    font-size: 11px;
+    font-size: 13px;
 
     font-weight: 600;
 
@@ -1024,9 +1069,9 @@ h2 {
 
 .anomaly-dot {
 
-    width: 6px;
+    width: 8px;
 
-    height: 6px;
+    height: 8px;
 
     border-radius: 50%;
 
@@ -1036,7 +1081,7 @@ h2 {
 
 .anomaly-value {
 
-    font-size: 11px;
+    font-size: 13px;
 
     font-weight: 600;
 
@@ -1046,23 +1091,354 @@ h2 {
 
 .anomaly-time {
 
-    margin-top: 5px;
+    margin-top: 7px;
 
-    font-size: 9px;
+    font-size: 11px;
+
+    line-height: 1.4;
 
     color: #999;
 }
 
 
+.anomaly-process {
+
+    margin-top: 6px;
+
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    color: #777;
+}
+
+
 .no-anomalies {
 
-    padding: 25px 5px;
+    padding: 32px 8px;
 
     text-align: center;
 
-    font-size: 10px;
+    font-size: 13px;
 
     color: #999;
+}
+
+
+/* Typography and spacing refinements for comfortable viewing at 100% zoom. */
+.dashboard {
+
+    padding-top: 24px;
+
+    padding-bottom: 24px;
+}
+
+
+.topbar {
+
+    margin-bottom: 20px;
+}
+
+
+.brand h1 {
+
+    font-size: 34px;
+}
+
+
+.last-updated,
+.online {
+
+    font-size: 13px;
+}
+
+
+.section-heading {
+
+    margin-bottom: 12px;
+}
+
+
+h2 {
+
+    font-size: 20px;
+}
+
+
+.section-heading p,
+.activity-header p,
+.anomaly-header p {
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+
+.resources-section {
+
+    margin-bottom: 18px;
+}
+
+
+.metric-card {
+
+    height: 255px;
+
+    min-height: 255px;
+
+    padding: 18px 20px;
+}
+
+
+.metric-name strong {
+
+    font-size: 17px;
+}
+
+
+.metric-name span,
+.gauge-text span {
+
+    font-size: 13px;
+}
+
+
+.metric-header label {
+
+    font-size: 10px;
+}
+
+
+.usage {
+
+    font-size: 13px;
+}
+
+
+.activity-section,
+.anomaly-section {
+
+    padding: 18px 22px;
+}
+
+
+.activity-list {
+
+    flex: 0 0 auto;
+
+    margin-top: 10px;
+}
+
+
+.activity-row {
+
+    flex: 0 0 78px;
+}
+
+
+.activity-info strong,
+.activity-value strong {
+
+    font-size: 14px;
+}
+
+
+.activity-info span,
+.activity-footer {
+
+    font-size: 12px;
+}
+
+
+.live {
+
+    font-size: 12px;
+}
+
+
+.anomaly-process {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+    padding: 9px 10px;
+
+    border: 1px solid #dbe8ff;
+
+    border-radius: 8px;
+
+    background: #f5f8ff;
+
+    color: #334155;
+
+    font-size: 12px;
+
+    line-height: 1.45;
+}
+
+
+.anomaly-process-label {
+
+    flex: 0 0 auto;
+
+    padding: 2px 6px;
+
+    border-radius: 4px;
+
+    background: #dce9ff;
+
+    color: #2f6fd6;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.4px;
+
+    text-transform: uppercase;
+}
+
+
+.anomaly-process-name {
+
+    min-width: 0;
+
+    font-weight: 550;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* Keep a growing log contained within the existing lower dashboard row. */
+.bottom-section {
+
+    height: 430px;
+
+    grid-auto-rows: 430px;
+}
+
+
+.activity-section,
+.anomaly-section,
+.anomaly-list {
+
+    min-height: 0;
+}
+
+
+.anomaly-list {
+
+    overscroll-behavior: contain;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+
+.anomaly-list::-webkit-scrollbar {
+
+    width: 7px;
+}
+
+
+.anomaly-list::-webkit-scrollbar-thumb {
+
+    border-radius: 999px;
+
+    background: #cbd5e1;
+}
+
+
+/* The process itself is the emphasis; no repeated CPU label is needed. */
+.anomaly-process {
+
+    align-items: center;
+
+    gap: 0;
+
+    padding: 10px 12px;
+
+    border-color: #d7e5ff;
+
+    background: linear-gradient(135deg, #f6f9ff, #eef5ff);
+
+    box-shadow: inset 3px 0 0 #4b83e7;
+}
+
+
+.anomaly-process::before {
+
+    content: "";
+
+    width: 7px;
+
+    height: 7px;
+
+    flex: 0 0 auto;
+
+    margin-right: 9px;
+
+    border-radius: 50%;
+
+    background: #4b83e7;
+
+    box-shadow: 0 0 0 4px rgba(75, 131, 231, 0.12);
+}
+
+
+.anomaly-process-name {
+
+    color: #24416d;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.1px;
+}
+
+
+/* Larger, calmer controls make the log easier to scan at normal browser zoom. */
+.anomaly-actions {
+
+    gap: 10px;
+}
+
+
+.anomaly-header p {
+
+    font-size: 12px;
+
+    line-height: 1.45;
+}
+
+
+#anomaly-count {
+
+    min-width: 30px;
+
+    height: 30px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+}
+
+
+#clear-anomalies {
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
 }
 
 
@@ -1112,6 +1488,93 @@ h2 {
 /* =========================
    RESPONSIVE
 ========================= */
+
+/* Live process attribution beneath each resource gauge. */
+.metric-card {
+
+    height: 280px;
+
+    min-height: 280px;
+}
+
+
+.gauge-process {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    min-width: 0;
+
+    margin: 9px 4px 0;
+
+    padding: 6px 9px;
+
+    border: 1px solid #e8edf3;
+
+    border-radius: 7px;
+
+    background: #fafcff;
+
+    color: #718096;
+
+    font-size: 10px;
+
+    line-height: 1.2;
+}
+
+
+.gauge-process span {
+
+    flex: 0 0 auto;
+}
+
+
+.gauge-process strong {
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: #334155;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.cpu-process {
+
+    border-color: #d9f1e3;
+
+    background: #f4fbf7;
+}
+
+
+.memory-process {
+
+    border-color: #dce8ff;
+
+    background: #f5f8ff;
+}
+
+
+.disk-process {
+
+    border-color: #ffe8c8;
+
+    background: #fffaf1;
+}
+
 
 @media (max-width: 1000px) {
 
