@@ -1,7 +1,8 @@
 const history = {
     cpu: [],
     memory: [],
-    disk: []
+    disk: [],
+    timestamps: []
 };
 
 const MAX_POINTS = 40;
@@ -72,12 +73,20 @@ function updateProcessAttribution(processes) {
 }
 
 
-function updateHistory(name, value) {
+function updateHistory(name, value, timestamp) {
 
     history[name].push(value);
 
     if (history[name].length > MAX_POINTS) {
         history[name].shift();
+    }
+
+    if (name === "cpu" && timestamp) {
+        history.timestamps.push(timestamp);
+
+        if (history.timestamps.length > MAX_POINTS) {
+            history.timestamps.shift();
+        }
     }
 }
 
@@ -143,6 +152,43 @@ function updateChart() {
             "points",
             createSparkline(history.disk)
         );
+
+    updateTimeAxis();
+}
+
+
+function formatChartTime(timestamp) {
+
+    const date = new Date(timestamp.replace(" ", "T"));
+
+    return Number.isNaN(date.getTime())
+        ? timestamp
+        : date.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+}
+
+
+function updateTimeAxis() {
+
+    const axis = document.getElementById("activity-time-axis");
+    const timestamps = history.timestamps;
+
+    if (!timestamps.length) {
+        axis.innerHTML = "";
+        return;
+    }
+
+    const labelCount = Math.min(5, timestamps.length);
+    const lastIndex = timestamps.length - 1;
+    const indexes = Array.from({ length: labelCount }, (_, index) =>
+        Math.round((index * lastIndex) / Math.max(1, labelCount - 1))
+    );
+
+    axis.innerHTML = indexes.map(index =>
+        `<span>${formatChartTime(timestamps[index])}</span>`
+    ).join("");
 }
 
 
@@ -278,6 +324,8 @@ async function loadHistory() {
 
             history.disk.push(item.disk);
 
+            history.timestamps.push(item.timestamp);
+
         });
 
 
@@ -289,6 +337,9 @@ async function loadHistory() {
 
         history.disk =
             history.disk.slice(-MAX_POINTS);
+
+        history.timestamps =
+            history.timestamps.slice(-MAX_POINTS);
 
 
         updateChart();
@@ -341,7 +392,8 @@ async function getSystemData() {
 
         updateHistory(
             "cpu",
-            cpu
+            cpu,
+            new Date().toISOString()
         );
 
         updateHistory(

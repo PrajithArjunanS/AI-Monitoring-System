@@ -860,6 +860,28 @@ h2 {
 }
 
 
+.activity-time-axis {
+
+    display: flex;
+
+    flex: 1;
+
+    justify-content: space-between;
+
+    min-width: 0;
+
+    margin-left: auto;
+
+    color: #8a94a6;
+
+    font-size: 12px;
+
+    font-variant-numeric: tabular-nums;
+
+    white-space: nowrap;
+}
+
+
 .legend-item {
 
     display: flex;
@@ -1448,10 +1470,45 @@ h2 {
 
 .metric-card.anomaly {
 
-    border-color: #e5b0b0;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+
+    border-color: #f0aaaa;
 
     box-shadow:
-        0 0 0 1px rgba(190, 55, 55, 0.08);
+        0 0 0 1px rgba(190, 55, 55, 0.08),
+        0 10px 26px rgba(190, 55, 55, 0.08);
+}
+
+
+.metric-card.anomaly .gauge-bg {
+
+    stroke: #f4caca;
+}
+
+
+.metric-card.anomaly .gauge-value {
+
+    stroke: #dc3f3f;
+}
+
+
+.metric-card.anomaly .icon {
+
+    background: #ffe1e1;
+}
+
+
+.metric-card.anomaly .icon svg {
+
+    stroke: #dc3f3f;
+}
+
+
+.metric-card.anomaly .gauge-process {
+
+    border-color: #f3c7c7;
+
+    background: rgba(255, 255, 255, 0.55);
 }
 
 
@@ -1667,6 +1724,12 @@ h2 {
             95px
             1fr
             45px;
+    }
+
+
+    .activity-time-axis {
+
+        font-size: 11px;
     }
 
 

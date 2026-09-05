@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated/exported data
+data/
+
+# Optional: virtual environments
+venv/
+.venv/
+
+# Environment/secrets
+.env

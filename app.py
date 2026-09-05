@@ -8,6 +8,18 @@ app = Flask(__name__)
 
 previous_anomaly = None
 previous_disk_io = {}
+PROCESS_COLLECTION_INTERVAL = 6
+TOP_PROCESSES = 10
+last_process_snapshot_at = None
+process_cpu_trackers = {}
+
+PROCESS_INSPECTION_ERRORS = (
+    psutil.NoSuchProcess,
+    psutil.AccessDenied,
+    psutil.ZombieProcess,
+    PermissionError,
+    OSError,
+)
 
 
 def get_top_cpu_process():
@@ -88,6 +100,108 @@ def get_top_disk_process():
 
     return top_process
 
+
+def sample_process_usage():
+    """Collect non-blocking CPU and memory samples for running processes."""
+    global process_cpu_trackers
+
+    sampled_processes = []
+    active_trackers = {}
+
+    for process in psutil.process_iter(["pid", "name", "create_time"]):
+        try:
+            pid = process.info["pid"]
+
+            if pid == 0:
+                continue
+
+            create_time = process.info["create_time"]
+            process_key = (pid, create_time)
+            tracker = process_cpu_trackers.get(process_key)
+
+            if tracker is None:
+                # The first non-blocking call establishes psutil's CPU baseline.
+                tracker = psutil.Process(pid)
+                tracker.cpu_percent(interval=None)
+                cpu_percent = 0.0
+            else:
+                cpu_percent = tracker.cpu_percent(interval=None)
+
+            active_trackers[process_key] = tracker
+            sampled_processes.append({
+                "pid": pid,
+                "process_name": process.info["name"] or "Unknown process",
+                "create_time": create_time,
+                "cpu": cpu_percent,
+                "memory": process.memory_percent(),
+            })
+        except PROCESS_INSPECTION_ERRORS:
+            continue
+
+    # Drop exited processes so PID reuse cannot inherit an old CPU baseline.
+    process_cpu_trackers = active_trackers
+
+    return sampled_processes
+
+
+def select_top_processes(processes):
+    """Return the top CPU and memory consumers, deduplicated by process instance."""
+    top_cpu = sorted(processes, key=lambda process: process["cpu"], reverse=True)
+    top_memory = sorted(
+        processes,
+        key=lambda process: process["memory"],
+        reverse=True,
+    )
+
+    selected = {}
+    for process in top_cpu[:TOP_PROCESSES] + top_memory[:TOP_PROCESSES]:
+        selected[(process["pid"], process["create_time"])] = process
+
+    return list(selected.values())
+
+
+def save_process_snapshot(timestamp, processes):
+    """Persist a limited process snapshot at the configured collection interval."""
+    global last_process_snapshot_at
+
+    current_time = datetime.now().timestamp()
+
+    if last_process_snapshot_at is None:
+        # Allow one collection interval for non-blocking CPU samples to warm up.
+        last_process_snapshot_at = current_time
+        return
+
+    if current_time - last_process_snapshot_at < PROCESS_COLLECTION_INTERVAL:
+        return
+
+    last_process_snapshot_at = current_time
+    selected_processes = select_top_processes(processes)
+
+    if not selected_processes:
+        return
+
+    conn = sqlite3.connect("monitoring.db")
+    conn.executemany(
+        """
+        INSERT INTO process_metrics
+        (timestamp, pid, process_name, create_time, cpu, memory)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        [
+            (
+                timestamp,
+                process["pid"],
+                process["process_name"],
+                process["create_time"],
+                process["cpu"],
+                process["memory"],
+            )
+            for process in selected_processes
+        ],
+    )
+    conn.commit()
+    conn.close()
+
 def init_db():
 
     conn = sqlite3.connect("monitoring.db")
@@ -110,6 +224,23 @@ def init_db():
             value REAL,
             process_name TEXT
         )
+    """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS process_metrics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            pid INTEGER,
+            process_name TEXT,
+            create_time REAL,
+            cpu REAL,
+            memory REAL
+        )
+    """)
+
+    conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_process_metrics_timestamp
+        ON process_metrics(timestamp)
     """)
 
     columns = [row[1] for row in conn.execute("PRAGMA table_info(anomaly_logs)")]
@@ -136,6 +267,10 @@ def system_info():
     top_cpu_process = get_top_cpu_process()
     top_memory_process = get_top_memory_process()
     top_disk_process = get_top_disk_process()
+    process_snapshot = sample_process_usage()
+
+    # Reuse this timestamp for both the system metric and its process snapshot.
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
     # Check against previous history
@@ -172,10 +307,6 @@ def system_info():
 
     if anomaly_type and anomaly_type != previous_anomaly:
 
-        timestamp = datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-
         value = {
             "cpu": cpu,
             "memory": memory,
@@ -211,10 +342,6 @@ def system_info():
 
 
     # Save current measurement
-    timestamp = datetime.now().strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
-
     conn = sqlite3.connect("monitoring.db")
 
     conn.execute("""
@@ -231,6 +358,7 @@ def system_info():
     conn.commit()
     conn.close()
 
+    save_process_snapshot(timestamp, process_snapshot)
 
     return jsonify({
 
@@ -303,6 +431,33 @@ def anomalies():
             "resource": row[1],
             "value": row[2],
             "process_name": row[3]
+        }
+        for row in rows
+    ])
+
+
+@app.route("/api/processes")
+def processes():
+
+    conn = sqlite3.connect("monitoring.db")
+
+    rows = conn.execute("""
+        SELECT timestamp, pid, process_name, create_time, cpu, memory
+        FROM process_metrics
+        ORDER BY id DESC
+        LIMIT 100
+    """).fetchall()
+
+    conn.close()
+
+    return jsonify([
+        {
+            "timestamp": row[0],
+            "pid": row[1],
+            "process_name": row[2],
+            "create_time": row[3],
+            "cpu": row[4],
+            "memory": row[5],
         }
         for row in rows
     ])
